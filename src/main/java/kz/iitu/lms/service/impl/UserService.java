@@ -4,23 +4,30 @@ import kz.iitu.lms.model.User;
 import kz.iitu.lms.repository.UserRepo;
 import kz.iitu.lms.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService implements IUserService {
+public class UserService implements IUserService, UserDetailsService {
 
     @Autowired
     private UserRepo userRepo;
 
+    BCryptPasswordEncoder passwordEncoder;
     @Override
     public User create(User o) {
+        o.setPassword(passwordEncoder.encode(o.getPassword()));
         return userRepo.save(o);
     }
 
     @Override
     public User update(User o) {
+        o.setPassword(passwordEncoder.encode(o.getPassword()));
         return userRepo.save(o);
     }
 
@@ -44,4 +51,8 @@ public class UserService implements IUserService {
         return userRepo.getAllByFullNameContaining(name);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return userRepo.getByUsername(s);
+    }
 }
