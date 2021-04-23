@@ -22,13 +22,13 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private Date dateOfBirth;
-    @OneToOne
-    private UserRole userRole;
+    private String role;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<UserRole> userRoles=new ArrayList<>();
-        userRoles.add(userRole);
+        userRoles.add(new UserRole(this.id,role));
         return userRoles;
     }
 

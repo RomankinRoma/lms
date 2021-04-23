@@ -1,20 +1,22 @@
 package kz.iitu.lms.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
 
-@Table
-@Entity
 @Data
+@NoArgsConstructor
 public class UserRole implements GrantedAuthority {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String role;
+
+    public UserRole(Long id, String role) {
+        this.id = id;
+        this.role = role;
+    }
 
     @Override
     public String getAuthority() {
