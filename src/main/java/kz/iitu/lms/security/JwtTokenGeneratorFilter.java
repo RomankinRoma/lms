@@ -29,41 +29,36 @@ public class JwtTokenGeneratorFilter extends UsernamePasswordAuthenticationFilte
     public JwtTokenGeneratorFilter(AuthenticationManager authManager) {
         this.authManager = authManager;
 
-        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/auth/**", "POST"));
+        setFilterProcessesUrl("/users/auth");
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
 
-        try {
-            User creds = new ObjectMapper().readValue(request.getInputStream(), User.class);
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    creds.getUsername(), creds.getPassword(), Collections.emptyList());
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                username,password);
+        return authManager.authenticate(authToken);
 
-            return authManager.authenticate(authToken);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
-
+        System.out.println(auth);
         Long now = System.currentTimeMillis();
         String token = Jwts.builder()
                 .setSubject(auth.getName())
-                .claim("authorities", auth.getAuthorities().stream()
+                .claim("role", auth.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + 60*60 * 1000))  // in milliseconds
                 .signWith(SignatureAlgorithm.HS512, "secret-key".getBytes())
                 .compact();
-
-        // Add token to header
+        System.out.println("Bearer " + token);
         response.addHeader("Authorization", "Bearer " + token);
     }
 }

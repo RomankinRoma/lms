@@ -16,6 +16,7 @@ public class UserController {
     @Autowired
     private IUserService iUserService;
 
+
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     public User create(@RequestBody User o){
         return iUserService.create(o);
