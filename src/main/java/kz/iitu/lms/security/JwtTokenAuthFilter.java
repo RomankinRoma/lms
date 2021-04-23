@@ -37,9 +37,9 @@ public class JwtTokenAuthFilter extends OncePerRequestFilter {
             String username = claims.getSubject();
             if (username != null) {
                 @SuppressWarnings("unchecked")
-                List<String> authorities = (List<String>) claims.get("role");
+                List<String> roles = (List<String>) claims.get("role");
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        username, null, authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+                        username, null, roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
