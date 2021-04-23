@@ -23,6 +23,7 @@ public class Config extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/auth").permitAll()
                 .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/swagger").permitAll()
+                .antMatchers("/v3/api-docs/**").permitAll()
                 .antMatchers("/users/create").permitAll()
                 .antMatchers("/users/update").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
